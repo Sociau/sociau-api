@@ -6,6 +6,7 @@ import os
 load_dotenv(".env")
 
 app = Flask(__name__)
+app.config['MYSQL_DATABASE_URI'] = os.getenv('DB_URI')
 
 port = os.environ.get('PORT', 3000)
 version = os.environ.get('VERSION')
