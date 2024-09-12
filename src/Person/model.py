@@ -9,4 +9,4 @@ class Person(db.Model):
     email = db.Column('email', db.String, not_null=True)
     password = db.Column('password', db.String, not_null=True)
     nickname = db.Column('nickname', db.String, not_null=True)
-    address_id = db.Column('address_id', db.Integer, db.ForeignKey('address_id'))
+    address_id = db.Column('address_id', db.Integer, db.ForeignKey('address.id'))
