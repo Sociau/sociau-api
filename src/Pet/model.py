@@ -1,19 +1,20 @@
-from database import db
-from sqlalchemy import text
+from database.db import db
+from src.Address.model import Address
+
 
 class Pet(db.Model):
-    __Tablename__ = 'Pet'
+    __tablename__ = 'pet'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    species = db.Column('species', db.String, not_null=True)
-    race = db.Column('race', db.String, not_null=True)
-    name = db.Column('name', db.String, not_null=True)
-    adopted = db.Column('adopted', db.Boolean, not_null=True)
-    vaccinated = db.Column('vaccinated', db.Boolean, not_null=True)
-    castrated = db.Column('castrated', db.Boolean, not_null=True)
-    size_in_cm = db.Column('size_in_cm', db.Float, not_null=True)
-    sex = db.Column('sex', db.String, not_null=True)
-    address_id = db.Column('address_id', db.Integer, db.Foreign_key('address.id'))
-    availability = db.Column('availability', db.Boolean, not_null=True)
-    special_needs = db.Column('special_needs', db.Boolean, not_null=True)
-    which_special_needs = db.Column('which_special_needs', db.String)
-    adoption_history_id = db.Column('adoption_history_id', db.Integer, db.ForeignKey('adoption_history.id'))
+    species = db.Column(db.String(20), nullable=False)
+    breed = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(50), nullable=False)
+    adopted = db.Column(db.Boolean, nullable=False)
+    vaccinated = db.Column(db.Boolean, nullable=False)
+    castrated = db.Column(db.Boolean, nullable=False)
+    size = db.Column(db.Float, nullable=False)
+    gender = db.Column(db.String(1), nullable=False)
+    address_id = db.Column(db.Integer, db.ForeignKey('address.id'))
+    availability = db.Column(db.Boolean, nullable=False)
+    special_needs = db.Column(db.Boolean, nullable=False)
+    which_special_needs = db.Column(db.String(255))
+    address = db.relationship('Address', backref='pets')
