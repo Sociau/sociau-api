@@ -1,12 +1,11 @@
-from database import db
-from sqlalchemy import text
+from database.db import db
+
 
 class Address(db.Model):
-    __tablename__ = 'Address'
-    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    state = db.Column('state',db.String, not_null=True)
-    city = db.Column('city', db.String, not_null=True)
-    street_name = db.Column('street_name', db.String, not_null=True)
-    district = db.Column('district', db.String, not_null=True)
-    house_number = db.Column('house_number', db.Integer)
-
+    __tablename__ = 'address'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    state = db.Column(db.String(2), nullable=False)
+    city = db.Column(db.String(150), nullable=False)
+    street = db.Column(db.String(150), nullable=False)
+    neighborhood = db.Column(db.String(150), nullable=False)
+    number = db.Column(db.Integer)
