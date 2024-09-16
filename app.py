@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 import os
 from database.db import db
 
-from src.Adoption_history.model import Adoption_history
+from src.Address.routes import address_routes
 
 load_dotenv(".env")
 
@@ -16,9 +16,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 
+app.register_blueprint(address_routes)
+
 port = os.environ.get('PORT', 3000)
 version = os.environ.get('VERSION')
 CORS(app)
+
 
 print(f'Porta: {port}')
 print(f'Versão: {version}')
