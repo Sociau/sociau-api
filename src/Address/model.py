@@ -9,3 +9,10 @@ class Address(db.Model):
     street = db.Column(db.String(150), nullable=False)
     neighborhood = db.Column(db.String(150), nullable=False)
     number = db.Column(db.Integer)
+
+    def __init__(self, state, city, street, neighborhood, number):
+        self.state = state
+        self.city = city
+        self.street = street
+        self.neighborhood = neighborhood
+        self.number = number
