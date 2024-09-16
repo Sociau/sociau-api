@@ -6,6 +6,7 @@ import os
 from database.db import db
 
 from src.Address.routes import address_routes
+from src.Person.routes import person_routes
 
 load_dotenv(".env")
 
@@ -17,6 +18,7 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 app.register_blueprint(address_routes)
+app.register_blueprint(person_routes)
 
 port = os.environ.get('PORT', 3000)
 version = os.environ.get('VERSION')
