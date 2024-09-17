@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from src.Address.model import Address
+from src.entities.Address.model import Address
 from database.db import db
 
 
