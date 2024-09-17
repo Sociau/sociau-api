@@ -1,5 +1,5 @@
 from database.db import db
-from src.Person.model import Person
+from src.entities.Person.model import Person
 
 
 class Donation_history(db.Model):

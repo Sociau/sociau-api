@@ -1,6 +1,6 @@
 from database.db import db
-from src.Person.model import Person
-from src.Pet.model import Pet
+from src.entities.Person.model import Person
+from src.entities.Pet.model import Pet
 
 
 class Adoption_history(db.Model):

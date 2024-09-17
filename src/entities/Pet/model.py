@@ -1,5 +1,5 @@
 from database.db import db
-from src.Address.model import Address
+from src.entities.Address.model import Address
 
 
 class Pet(db.Model):
