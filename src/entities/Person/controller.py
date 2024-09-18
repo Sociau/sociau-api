@@ -85,8 +85,6 @@ class PersonController:
 
             person = Person.query.filter_by(email=email).first()
 
-            person = Person.query.filter_by(email=email).first()
-
             if person and CryptographyManager().from_hash_code_to_string(person.password) == password:
                 token_gen = create_token(person.id, person.email, person.nickname)
 
