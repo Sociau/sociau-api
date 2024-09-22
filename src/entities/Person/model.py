@@ -4,6 +4,7 @@ from src.entities.Address.model import Address
 
 class Person(db.Model):
     __tablename__ = "person"
+    avatar = db.Column(db.String(500))
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False)
     main_whatsapp = db.Column(db.String(13), nullable=False)
@@ -18,6 +19,7 @@ class Person(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
+            'avatar': self.avatar,
             'name': self.name,
             'main_whatsapp': self.main_whatsapp,
             'second_whatsapp': self.second_whatsapp,

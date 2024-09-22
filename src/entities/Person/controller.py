@@ -8,12 +8,13 @@ from database.db import db
 
 app = Flask(__name__)
 
+
 class PersonController:
     @staticmethod
     def add():
         try:
             data = request.get_json()
-            
+
             name = data.get('name')
             main_whatsapp = data.get('main_whatsapp')
             second_whatsapp = data.get('second_whatsapp')
@@ -21,6 +22,7 @@ class PersonController:
             email = data.get('email')
             password = data.get('password')
             nickname = data.get('nickname')
+            avatar = ""
 
             address_data = data.get('address')
             if address_data:
@@ -29,7 +31,7 @@ class PersonController:
                 street = address_data.get('street')
                 neighborhood = address_data.get('neighborhood')
                 number = address_data.get('number')
-                
+
                 address = Address(state, city, street, neighborhood, number)
                 db.session.add(address)
                 db.session.commit()
@@ -56,7 +58,8 @@ class PersonController:
                 email=email,
                 password=crypted_password,
                 nickname=nickname,
-                address_id=address_id
+                address_id=address_id,
+                avatar=avatar
             )
 
             db.session.add(person)
@@ -86,9 +89,11 @@ class PersonController:
             person = Person.query.filter_by(email=email).first()
 
             if person and CryptographyManager().from_hash_code_to_string(person.password) == password:
-                token_gen = create_token(person.id, person.email, person.nickname)
+                token_gen = create_token(
+                    person.id, person.email, person.nickname)
 
-                token = token_gen.decode('utf-8') if isinstance(token_gen, bytes) else token_gen
+                token = token_gen.decode(
+                    'utf-8') if isinstance(token_gen, bytes) else token_gen
 
                 response = {
                     'status': 200,
