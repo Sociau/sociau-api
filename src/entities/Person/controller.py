@@ -83,10 +83,10 @@ class PersonController:
         try:
             data = request.get_json()
 
-            email = data.get('email')
+            nickname = data.get('nickname')
             password = data.get('password')
 
-            person = Person.query.filter_by(email=email).first()
+            person = Person.query.filter_by(nickname=nickname).first()
 
             if person and CryptographyManager().from_hash_code_to_string(person.password) == password:
                 token_gen = create_token(
