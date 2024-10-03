@@ -115,3 +115,21 @@ class PersonController:
                 'message': str(e)
             }
             return jsonify(response)
+    
+    @staticmethod
+    def get_user(user_id):
+        try:
+            # Fetch the user by ID
+            person = Person.query.get(user_id)
+            if person:
+                # Return user data as JSON
+                return jsonify({
+                    'id': person.id,
+                    'nickname': person.nickname,
+                    'email': person.email,
+                    # Add any other fields you want to return
+                }), 200
+            else:
+                return jsonify({'error': 'User not found!'}), 404
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
