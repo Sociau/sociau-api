@@ -119,15 +119,20 @@ class PersonController:
     @staticmethod
     def get_user(user_id):
         try:
-            # Fetch the user by ID
+            
             person = Person.query.get(user_id)
             if person:
-                # Return user data as JSON
+                
                 return jsonify({
                     'id': person.id,
-                    'nickname': person.nickname,
+                    'avatar': person.avatar,
+                    'name': person.name,
+                    'main_whatsapp': person.main_whatsapp,
+                    'second_whatsapp': person.second_whatsapp,
+                    'about_you': person.about_you,
                     'email': person.email,
-                    # Add any other fields you want to return
+                    'nickname': person.nickname,
+                    'address_id': person.address_id
                 }), 200
             else:
                 return jsonify({'error': 'User not found!'}), 404
