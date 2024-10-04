@@ -121,9 +121,10 @@ class PersonController:
         try:
             
             person = Person.query.get(user_id)
+
             if person:
-                
-                return jsonify({
+                response = {
+                    'status': 200,
                     'id': person.id,
                     'avatar': person.avatar,
                     'name': person.name,
@@ -133,8 +134,16 @@ class PersonController:
                     'email': person.email,
                     'nickname': person.nickname,
                     'address_id': person.address_id
-                }), 200
+                }
+                return jsonify(response)
+            
             else:
                 return jsonify({'error': 'User not found!'}), 404
         except Exception as e:
-            return jsonify({'error': str(e)}), 500
+
+            response = {
+                'error': 500,
+                'message': str(e)
+            }
+
+            return jsonify(response)
