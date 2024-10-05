@@ -138,7 +138,11 @@ class PersonController:
                 return jsonify(response)
             
             else:
-                return jsonify({'error': 'User not found!'}), 404
+                response = {
+                    'status': 404,
+                    'message': 'User not found!'
+                }
+                return jsonify(response)
         except Exception as e:
 
             response = {
