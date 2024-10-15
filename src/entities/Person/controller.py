@@ -115,28 +115,19 @@ class PersonController:
                 'message': str(e)
             }
             return jsonify(response)
-    
+
     @staticmethod
-    def get_user(user_id):
+    def get_user(current_user, user_id):
         try:
-            
             person = Person.query.get(user_id)
 
             if person:
                 response = {
                     'status': 200,
-                    'id': person.id,
-                    'avatar': person.avatar,
-                    'name': person.name,
-                    'main_whatsapp': person.main_whatsapp,
-                    'second_whatsapp': person.second_whatsapp,
-                    'about_you': person.about_you,
-                    'email': person.email,
-                    'nickname': person.nickname,
-                    'address_id': person.address_id
+                    'person': person.to_dict(),
                 }
                 return jsonify(response)
-            
+
             else:
                 response = {
                     'status': 404,
