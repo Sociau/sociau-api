@@ -13,7 +13,7 @@ from src.entities.Person.model import Person
 load_dotenv(".env")
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DB_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DB_URI_PROD')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
