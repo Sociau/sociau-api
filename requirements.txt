@@ -1,5 +1,5 @@
 alembic==1.13.2
-command-not-found==0.3
+
 cryptography==2.8
 Flask==3.0.3
 Flask-Cors==5.0.0
@@ -10,7 +10,7 @@ PyJWT==1.7.1
 PyMySQL==1.1.1
 pytest==8.0.2
 python-dotenv==1.0.1
-requests==2.22.0
+requests
 simplejson==3.16.0
 SQLAlchemy==2.0.31
-urllib3==2.2.2
+urllib3
