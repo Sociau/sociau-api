@@ -1,6 +1,7 @@
 from flask import jsonify, request
 
 from database.db import db
+from src.helpers.upload_to_firebase import send_image_to_firebase
 from src.entities.Address.model import Address
 from src.entities.Person.model import Person
 from src.entities.Pet.model import Pet
@@ -11,18 +12,27 @@ class PetController:
     @staticmethod
     def add():
         try:
-            data = request.get_json()
+            main_photo = ""
+            if 'main_photo' in request.files:
+                main_photo_file = request.files['main_photo']
+
+                if main_photo_file.filename == '':
+                    return jsonify({'status': 400, 'message': 'No file selected'}), 400
+
+                main_photo = send_image_to_firebase(
+                    main_photo_file, 'fotos_dos_pets')
+            data = request.form
 
             name = data.get('name')
             species = data.get('species')
             breed = data.get('breed')
-            adopted = data.get('adopted')
-            vaccinated = data.get('vaccinated')
-            castrated = data.get('castrated')
+            adopted = bool(data.get('adopted')) or 0
+            vaccinated = bool(data.get('vaccinated')) or 0
+            castrated = bool(data.get('castrated')) or 0
             size = data.get('size')
             gender = data.get('gender')
-            availability = data.get('availability')
-            special_needs = data.get('special_needs')
+            availability = bool(data.get('availability')) or 0
+            special_needs = bool(data.get('special_needs')) or 0
             which_special_needs = data.get('which_special_needs')
 
             person_id = data.get('person_id')
@@ -42,7 +52,8 @@ class PetController:
                 address_id=address_id,
                 availability=availability,
                 special_needs=special_needs,
-                which_special_needs=which_special_needs
+                which_special_needs=which_special_needs,
+                main_photo=main_photo
             )
 
             db.session.add(pet)

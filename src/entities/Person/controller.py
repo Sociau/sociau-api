@@ -13,17 +13,7 @@ class PersonController:
     @staticmethod
     def add():
         try:
-            data = request.get_json()
-
-            name = data.get('name')
-            main_whatsapp = data.get('main_whatsapp')
-            second_whatsapp = data.get('second_whatsapp')
-            about_you = data.get('about_you')
-            email = data.get('email')
-            password = data.get('password')
-            nickname = data.get('nickname')
             avatar = ""
-
             if 'avatar' in request.files:
                 avatar_file = request.files['avatar']
 
@@ -32,21 +22,35 @@ class PersonController:
 
                 avatar = send_image_to_firebase(avatar_file, 'avatars')
 
-            address_data = data.get('address')
-            if address_data:
-                state = address_data.get('state')
-                city = address_data.get('city')
-                street = address_data.get('street')
-                neighborhood = address_data.get('neighborhood')
-                number = address_data.get('number')
+            data = request.form
 
-                address = Address(state, city, street, neighborhood, number)
+            name = data.get('name')
+            main_whatsapp = data.get('main_whatsapp')
+            second_whatsapp = data.get('second_whatsapp')
+            about_you = data.get('about_you')
+            email = data.get('email')
+            password = data.get('password')
+            nickname = data.get('nickname')
+
+            state = data.get('state')
+            city = data.get('city')
+            street = data.get('street')
+            neighborhood = data.get('neighborhood')
+            number = data.get('number')
+
+            try:
+                address = Address(state=state, city=city, street=street,
+                                  neighborhood=neighborhood, number=number)
                 db.session.add(address)
                 db.session.commit()
+            except Exception as e:
+                response = {
+                    'status': 500,
+                    'message': str(e)
+                }
+                return jsonify(response)
 
-                address_id = address.id
-            else:
-                address_id = None
+            address_id = address.id
 
             check_email = Person.query.filter_by(email=email).first()
             if check_email:
