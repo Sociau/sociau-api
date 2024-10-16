@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 import os
 from database.db import db
 from src.middlewares.jwt import token_required
+from src.services.firebase import init_firebase
 from src.entities.Address.routes import address_routes
 from src.entities.Person.routes import person_routes
 from src.entities.Pet.routes import pets_routes
@@ -17,6 +18,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 migrate = Migrate(app, db)
+
+init_firebase()
 
 app.register_blueprint(address_routes)
 app.register_blueprint(person_routes)

@@ -116,9 +116,6 @@ class PetController:
             }
             return jsonify(response), 200
 
-        except SQLAlchemyError as e:
-            return jsonify({'status': 500, 'message': 'Database error', 'error': str(e)}), 500
-
         except Exception as e:
             return jsonify({'status': 500, 'message': 'Internal server error', 'error': str(e)}), 500
 

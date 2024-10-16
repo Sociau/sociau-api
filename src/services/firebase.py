@@ -1,4 +1,5 @@
 import os
+import time
 from firebase_admin import credentials, storage, initialize_app
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -26,34 +27,19 @@ def init_firebase():
     })
 
 
-def upload_image_to_firebase(file, upload_folder='uploads/'):
+def upload_image_to_firebase(file, folder_name):
     try:
-
-        if not file:
-            return {"error": "No file provided"}, 400
-
-        filename = secure_filename(file.filename)
-        if not filename:
-            return {"error": "No selected file"}, 400
-
-        filepath = os.path.join(upload_folder, filename)
-
-        if not os.path.exists(upload_folder):
-            os.makedirs(upload_folder)
-
-        file.save(filepath)
+        timestamp = str(int(time.time()))
+        filename = secure_filename(f"{timestamp}_{file.filename}")
 
         bucket = storage.bucket()
-        blob = bucket.blob(f'images/{filename}')
-        blob.upload_from_filename(filepath)
+        blob = bucket.blob(f"{folder_name}/{filename}")
+
+        blob.upload_from_file(file)
         blob.make_public()
 
-        file_url = blob.public_url
-
-        os.remove(filepath)
-
-        return file_url
+        return blob.public_url
 
     except Exception as e:
-
         print(f"Error during file upload: {str(e)}")
+        return None

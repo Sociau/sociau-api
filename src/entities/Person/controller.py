@@ -1,9 +1,9 @@
-import datetime
 from flask import jsonify, request, Flask
 from src.middlewares.jwt import create_token
 from src.helpers.utils import CryptographyManager
 from src.entities.Person.model import Person
 from src.entities.Address.model import Address
+from src.helpers.upload_to_firebase import send_image_to_firebase
 from database.db import db
 
 app = Flask(__name__)
@@ -23,6 +23,14 @@ class PersonController:
             password = data.get('password')
             nickname = data.get('nickname')
             avatar = ""
+
+            if 'avatar' in request.files:
+                avatar_file = request.files['avatar']
+
+                if avatar_file.filename == '':
+                    return jsonify({'status': 400, 'message': 'No file selected'}), 400
+
+                avatar = send_image_to_firebase(avatar_file, 'avatars')
 
             address_data = data.get('address')
             if address_data:

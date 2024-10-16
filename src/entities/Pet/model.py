@@ -17,6 +17,7 @@ class Pet(db.Model):
     availability = db.Column(db.Boolean, nullable=False)
     special_needs = db.Column(db.Boolean, nullable=False)
     which_special_needs = db.Column(db.String(255))
+    main_photo = db.Column(db.String(500))
     address = db.relationship('Address', backref='pets')
 
     def to_dict(self):
@@ -33,5 +34,6 @@ class Pet(db.Model):
             'address_id': self.address_id,
             'availability': self.availability,
             'special_needs': self.special_needs,
-            'which_special_needs': self.which_special_needs
+            'which_special_needs': self.which_special_needs,
+            'main_photo': self.main_photo
         }
