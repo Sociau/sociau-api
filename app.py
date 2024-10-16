@@ -7,8 +7,7 @@ from database.db import db
 from src.middlewares.jwt import token_required
 from src.entities.Address.routes import address_routes
 from src.entities.Person.routes import person_routes
-
-from src.entities.Person.model import Person
+from src.entities.Pet.routes import pets_routes
 
 load_dotenv(".env")
 
@@ -21,6 +20,7 @@ migrate = Migrate(app, db)
 
 app.register_blueprint(address_routes)
 app.register_blueprint(person_routes)
+app.register_blueprint(pets_routes)
 
 port = os.environ.get('PORT', 3000)
 version = os.environ.get('VERSION')

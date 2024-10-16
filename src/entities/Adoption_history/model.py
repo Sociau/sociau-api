@@ -10,3 +10,10 @@ class Adoption_history(db.Model):
     person = db.relationship('Person', backref='adoption_histories')
     pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
     pet = db.relationship('Pet', backref='adoption_histories')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'person_id': self.person_id,
+            'pet_id': self.pet_id
+        }

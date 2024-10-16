@@ -18,3 +18,20 @@ class Pet(db.Model):
     special_needs = db.Column(db.Boolean, nullable=False)
     which_special_needs = db.Column(db.String(255))
     address = db.relationship('Address', backref='pets')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'species': self.species,
+            'breed': self.breed,
+            'name': self.name,
+            'adopted': self.adopted,
+            'vaccinated': self.vaccinated,
+            'castrated': self.castrated,
+            'size': self.size,
+            'gender': self.gender,
+            'address_id': self.address_id,
+            'availability': self.availability,
+            'special_needs': self.special_needs,
+            'which_special_needs': self.which_special_needs
+        }
