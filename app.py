@@ -10,6 +10,8 @@ from src.entities.Address.routes import address_routes
 from src.entities.Person.routes import person_routes
 from src.entities.Pet.routes import pets_routes
 
+from src.entities.Pet.model import Pet
+
 load_dotenv(".env")
 
 app = Flask(__name__)

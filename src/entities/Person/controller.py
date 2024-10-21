@@ -36,11 +36,10 @@ class PersonController:
             city = data.get('city')
             street = data.get('street')
             neighborhood = data.get('neighborhood')
-            number = data.get('number')
 
             try:
                 address = Address(state=state, city=city, street=street,
-                                  neighborhood=neighborhood, number=number)
+                                  neighborhood=neighborhood)
                 db.session.add(address)
                 db.session.commit()
             except Exception as e:

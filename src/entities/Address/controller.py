@@ -12,8 +12,7 @@ class AddressController:
             city = data.get('city')
             street = data.get('street')
             neighborhood = data.get('neighborhood')
-            number = data.get('number')
-            address = Address(state, city, street, neighborhood, number)
+            address = Address(state, city, street, neighborhood)
 
             db.session.add(address)
             db.session.commit()

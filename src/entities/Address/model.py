@@ -8,11 +8,9 @@ class Address(db.Model):
     city = db.Column(db.String(150), nullable=False)
     street = db.Column(db.String(150), nullable=False)
     neighborhood = db.Column(db.String(150), nullable=False)
-    number = db.Column(db.Integer)
 
-    def __init__(self, state, city, street, neighborhood, number):
+    def __init__(self, state, city, street, neighborhood):
         self.state = state
         self.city = city
         self.street = street
         self.neighborhood = neighborhood
-        self.number = number

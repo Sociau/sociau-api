@@ -11,7 +11,7 @@ class Pet(db.Model):
     adopted = db.Column(db.Boolean, nullable=False)
     vaccinated = db.Column(db.Boolean, nullable=False)
     castrated = db.Column(db.Boolean, nullable=False)
-    size = db.Column(db.Float, nullable=False)
+    size = db.Column(db.String(1), nullable=False)
     gender = db.Column(db.String(1), nullable=False)
     address_id = db.Column(db.Integer, db.ForeignKey('address.id'))
     availability = db.Column(db.Boolean, nullable=False)
