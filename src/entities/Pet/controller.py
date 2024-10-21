@@ -79,16 +79,19 @@ class PetController:
         try:
             filters = []
 
+            name = request.args.get('name')
+            if name:
+                filters.append(Pet.name.like(f"%{name}%"))
+
             species = request.args.get('species')
             if species:
                 filters.append(Pet.species == species)
 
             gender = request.args.get('gender')
             if gender:
-                try:
-                    gender = int(gender)
+                if gender in ['M', 'F']:
                     filters.append(Pet.gender == gender)
-                except ValueError:
+                else:
                     return jsonify({'status': 400, 'message': 'Invalid gender value'}), 400
 
             state = request.args.get('state')
@@ -114,8 +117,17 @@ class PetController:
 
             pagination = query.paginate(
                 page=page, per_page=per_page, error_out=False)
-
-            pets = [pet.to_dict() for pet in pagination.items]
+            pets = [
+                {
+                    **pet.to_dict(),
+                    'address': {
+                        'id': pet.address.id,
+                        'street': pet.address.street,
+                        'city': pet.address.city,
+                        'state': pet.address.state
+                    } if pet.address else None
+                } for pet in pagination.items
+            ]
 
             response = {
                 'status': 200,
@@ -134,16 +146,22 @@ class PetController:
     def get_by_id(pet_id):
         try:
             pet = Pet.query.get(pet_id)
+            if not pet:
+                return jsonify({'status': 404, 'message': 'Pet not found'}), 404
 
             response = {
                 'status': 200,
-                'pet': pet.to_dict()
+                'pet': {
+                    **pet.to_dict(),
+                    'address': {
+                        'id': pet.address.id,
+                        'street': pet.address.street,
+                        'city': pet.address.city,
+                        'state': pet.address.state
+                    } if pet.address else None
+                }
             }
+            return jsonify(response), 200
 
-            return jsonify(response)
         except Exception as e:
-            response = {
-                'status': 500,
-                'message': str(e)
-            }
-            return jsonify(response)
+            return jsonify({'status': 500, 'message': 'Internal server error', 'error': str(e)}), 500

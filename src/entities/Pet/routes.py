@@ -14,12 +14,10 @@ def add_pet_route(current_user):
 
 
 @pets_routes.route('/pets', methods=['GET'])
-@token_required
-def get_pets_route(current_user):
+def get_pets_route():
     return PetController.get()
 
 
 @pets_routes.route('/pets/<int:pet_id>', methods=['GET'])
-@token_required
-def get_pet_route(current_user, pet_id):
+def get_pet_route(pet_id):
     return PetController.get_by_id(pet_id)
