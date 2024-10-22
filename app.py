@@ -9,6 +9,7 @@ from src.services.firebase import init_firebase
 from src.entities.Address.routes import address_routes
 from src.entities.Person.routes import person_routes
 from src.entities.Pet.routes import pets_routes
+from src.entities.Adoption_history.routes import adoption_routes
 
 from src.entities.Pet.model import Pet
 
@@ -26,6 +27,7 @@ init_firebase()
 app.register_blueprint(address_routes)
 app.register_blueprint(person_routes)
 app.register_blueprint(pets_routes)
+app.register_blueprint(adoption_routes)
 
 port = os.environ.get('PORT', 3000)
 version = os.environ.get('VERSION')

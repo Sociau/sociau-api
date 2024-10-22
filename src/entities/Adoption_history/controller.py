@@ -24,3 +24,29 @@ class AdoptionHistoryController:
                 'message': str(e)
             }
             return jsonify(response)
+
+    def get_adoption_history(person_id):
+        try:
+            adoption_history = Adoption_history.query.filter_by(
+                person_id=person_id).all()
+
+            pets = [
+                {
+                    'adoption_id': adoption.id,
+                    'pet_id': adoption.pet_id,
+                }
+                for adoption in adoption_history
+            ]
+
+            response = {
+                'status': 200,
+                'pets': pets
+            }
+            return jsonify(response)
+
+        except Exception as e:
+            response = {
+                'status': 500,
+                'message': str(e)
+            }
+            return jsonify(response)
