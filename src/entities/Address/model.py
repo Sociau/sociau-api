@@ -14,3 +14,12 @@ class Address(db.Model):
         self.city = city
         self.street = street
         self.neighborhood = neighborhood
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'state': self.state,
+            'city': self.city,
+            'street': self.street,
+            'neighborhood': self.neighborhood
+        }

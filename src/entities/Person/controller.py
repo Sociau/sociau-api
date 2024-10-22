@@ -106,10 +106,14 @@ class PersonController:
                 token = token_gen.decode(
                     'utf-8') if isinstance(token_gen, bytes) else token_gen
 
+                address = Address.query.get(person.address_id)
+                address_data = address.to_dict() if address else None
+
                 response = {
                     'status': 200,
                     'message': 'Login successful',
                     'person': person.to_dict(),
+                    'address': address_data,
                     'token': token
                 }
                 return jsonify(response)
@@ -133,9 +137,12 @@ class PersonController:
             person = Person.query.get(user_id)
 
             if person:
+                address = Address.query.get(person.address_id)
+                address_data = address.to_dict() if address else None
                 response = {
                     'status': 200,
                     'person': person.to_dict(),
+                    'address': address_data
                 }
                 return jsonify(response)
 
