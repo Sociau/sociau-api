@@ -132,9 +132,9 @@ class PersonController:
             return jsonify(response)
 
     @staticmethod
-    def get_user(current_user, user_id):
+    def get_person(current_person, person_id):
         try:
-            person = Person.query.get(user_id)
+            person = Person.query.get(person_id)
 
             if person:
                 address = Address.query.get(person.address_id)
@@ -149,9 +149,65 @@ class PersonController:
             else:
                 response = {
                     'status': 404,
-                    'message': 'User not found!'
+                    'message': 'person not found!'
                 }
                 return jsonify(response)
+        except Exception as e:
+
+            response = {
+                'error': 500,
+                'message': str(e)
+            }
+
+            return jsonify(response)
+
+    def update_person(current_person):
+        try:
+            person = Person.query.get(current_person['user'])
+
+            if person:
+                person_current_data = person = Person.query.get(current_person['user'])
+                data = request.form
+
+                person.name = data.get('name') or person_current_data.name
+                person.main_whatsapp = data.get('main_whatsapp') or person_current_data.main_whatsapp
+                person.second_whatsapp = data.get('second_whatsapp') or person_current_data.second_whatsapp
+                person.about_you = data.get('about_you') or person_current_data.about_you
+                person.email = data.get('email') or person_current_data.email
+                person.nickname = data.get('nickname') or person_current_data.nickname
+                person.avatar = person_current_data.avatar
+
+                if 'avatar' in request.files:
+                    avatar_file = request.files['avatar']
+
+                    if avatar_file.filename == '':
+                        return jsonify({'status': 400, 'message': 'No file selected'}), 400
+
+                    person.avatar = send_image_to_firebase(avatar_file, 'avatars')
+
+                db.session.commit()
+
+                address = Address.query.get(person.address_id)
+                address.state = data.get('state') or address.state
+                address.city = data.get('city') or address.city
+                address.street = data.get('street') or address.street
+                address.neighborhood = data.get('neighborhood') or address.neighborhood
+
+                db.session.commit()
+
+                response = {
+                    'status': 200,
+                    'message': 'person updated successfully'
+                }
+                return jsonify(response)
+
+            else:
+                response = {
+                    'status': 404,
+                    'message': 'person not found!'
+                }
+                return jsonify(response)
+
         except Exception as e:
 
             response = {
