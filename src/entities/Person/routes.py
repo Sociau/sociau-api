@@ -16,9 +16,8 @@ def login_person_route():
 
 
 @person_routes.route('/user/<int:user_id>', methods=['GET'])
-@token_required
-def get_user_route(current_user, user_id):
-    return PersonController.get_person(current_user, user_id)
+def get_user_route(user_id):
+    return PersonController.get_person(user_id)
 
 
 @person_routes.route('/user', methods=['PUT'])

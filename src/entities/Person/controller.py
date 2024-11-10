@@ -132,7 +132,7 @@ class PersonController:
             return jsonify(response)
 
     @staticmethod
-    def get_person(current_person, person_id):
+    def get_person(person_id):
         try:
             person = Person.query.get(person_id)
 
@@ -166,15 +166,20 @@ class PersonController:
             person = Person.query.get(current_person['user'])
 
             if person:
-                person_current_data = person = Person.query.get(current_person['user'])
+                person_current_data = person = Person.query.get(
+                    current_person['user'])
                 data = request.form
 
                 person.name = data.get('name') or person_current_data.name
-                person.main_whatsapp = data.get('main_whatsapp') or person_current_data.main_whatsapp
-                person.second_whatsapp = data.get('second_whatsapp') or person_current_data.second_whatsapp
-                person.about_you = data.get('about_you') or person_current_data.about_you
+                person.main_whatsapp = data.get(
+                    'main_whatsapp') or person_current_data.main_whatsapp
+                person.second_whatsapp = data.get(
+                    'second_whatsapp') or person_current_data.second_whatsapp
+                person.about_you = data.get(
+                    'about_you') or person_current_data.about_you
                 person.email = data.get('email') or person_current_data.email
-                person.nickname = data.get('nickname') or person_current_data.nickname
+                person.nickname = data.get(
+                    'nickname') or person_current_data.nickname
                 person.avatar = person_current_data.avatar
 
                 if 'avatar' in request.files:
@@ -183,7 +188,8 @@ class PersonController:
                     if avatar_file.filename == '':
                         return jsonify({'status': 400, 'message': 'No file selected'}), 400
 
-                    person.avatar = send_image_to_firebase(avatar_file, 'avatars')
+                    person.avatar = send_image_to_firebase(
+                        avatar_file, 'avatars')
 
                 db.session.commit()
 
@@ -191,7 +197,8 @@ class PersonController:
                 address.state = data.get('state') or address.state
                 address.city = data.get('city') or address.city
                 address.street = data.get('street') or address.street
-                address.neighborhood = data.get('neighborhood') or address.neighborhood
+                address.neighborhood = data.get(
+                    'neighborhood') or address.neighborhood
 
                 db.session.commit()
 

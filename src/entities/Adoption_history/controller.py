@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 
 from database.db import db
 from src.entities.Adoption_history.model import Adoption_history
@@ -25,28 +25,30 @@ class AdoptionHistoryController:
             }
             return jsonify(response)
 
-    def get_adoption_history(person_id):
+    @staticmethod
+    def get_adoption_history():
         try:
-            adoption_history = Adoption_history.query.filter_by(
-                person_id=person_id).all()
+            filters = []
 
-            pets = [
+            person_id = request.args.get('person_id', type=int)
+            if person_id:
+                filters.append(Adoption_history.person_id == person_id)
+
+            pet_id = request.args.get('pet_id', type=int)
+            if pet_id:
+                filters.append(Adoption_history.pet_id == pet_id)
+
+            adoption_history = Adoption_history.query.filter(*filters).all()
+
+            data = [
                 {
                     'adoption_id': adoption.id,
                     'pet_id': adoption.pet_id,
-                }
-                for adoption in adoption_history
+                    'person_id': adoption.person_id
+                } for adoption in adoption_history
             ]
 
-            response = {
-                'status': 200,
-                'pets': pets
-            }
-            return jsonify(response)
+            return jsonify({'status': 200, 'data': data}), 200
 
         except Exception as e:
-            response = {
-                'status': 500,
-                'message': str(e)
-            }
-            return jsonify(response)
+            return jsonify({'status': 500, 'message': 'Internal server error', 'error': str(e)}), 500
