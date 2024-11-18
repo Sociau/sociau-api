@@ -87,6 +87,10 @@ class PetController:
             if species:
                 filters.append(Pet.species == species)
 
+            size = request.args.get('size')
+            if size:
+                filters.append(Pet.size == size)
+
             gender = request.args.get('gender')
             if gender:
                 if gender in ['M', 'F']:
