@@ -2,8 +2,6 @@ from flask import jsonify, request
 
 from database.db import db
 from src.helpers.upload_to_firebase import send_image_to_firebase
-from src.entities.Address.model import Address
-from src.entities.Person.model import Person
 from src.entities.Pet.model import Pet
 from src.entities.Adoption_history.controller import AdoptionHistoryController
 
@@ -26,34 +24,32 @@ class PetController:
             name = data.get('name')
             species = data.get('species')
             breed = data.get('breed')
-            adopted = bool(data.get('adopted')) or 0
-            vaccinated = bool(data.get('vaccinated')) or 0
-            castrated = bool(data.get('castrated')) or 0
+            adopted = bool(data.get('adopted')) or False
             size = data.get('size')
             gender = data.get('gender')
-            availability = bool(data.get('availability')) or 0
-            special_needs = bool(data.get('special_needs')) or 0
+            main_photo = data.get('main_photo')
+            city = data.get('city')
+            state = data.get('state')
+            veterinary_care = data.get('veterinary_care')
+            temperament = data.get('temperament')
+            about = data.get('about')
             which_special_needs = data.get('which_special_needs')
-
             person_id = data.get('person_id')
-
-            person = Person.query.get(person_id)
-            address_id = person.address_id
 
             pet = Pet(
                 name=name,
                 species=species,
                 breed=breed,
                 adopted=adopted,
-                vaccinated=vaccinated,
-                castrated=castrated,
                 size=size,
                 gender=gender,
-                address_id=address_id,
-                availability=availability,
-                special_needs=special_needs,
-                which_special_needs=which_special_needs,
-                main_photo=main_photo
+                main_photo=main_photo,
+                city=city,
+                state=state,
+                veterinary_care=veterinary_care,
+                temperament=temperament,
+                about=about,
+                which_special_needs=which_special_needs
             )
 
             db.session.add(pet)
@@ -100,19 +96,16 @@ class PetController:
 
             state = request.args.get('state')
             if state:
-                filters.append(Address.state == state)
+                filters.append(Pet.state == state)
 
             city = request.args.get('city')
             if city:
-                filters.append(Address.city == city)
+                filters.append(Pet.city == city)
 
             page = request.args.get('page', 1, type=int)
             per_page = request.args.get('per_page', 10, type=int)
             sort_by = request.args.get('sort_by', 'id')
             order = request.args.get('order', 'asc')
-
-            query = Pet.query.join(
-                Address, Pet.address_id == Address.id).filter(*filters)
 
             if order == 'desc':
                 query = query.order_by(getattr(Pet, sort_by).desc())
@@ -123,13 +116,7 @@ class PetController:
                 page=page, per_page=per_page, error_out=False)
             pets = [
                 {
-                    **pet.to_dict(),
-                    'address': {
-                        'id': pet.address.id,
-                        'street': pet.address.street,
-                        'city': pet.address.city,
-                        'state': pet.address.state
-                    } if pet.address else None
+                    'pet': pet.to_dict()
                 } for pet in pagination.items
             ]
 
@@ -155,15 +142,7 @@ class PetController:
 
             response = {
                 'status': 200,
-                'pet': {
-                    **pet.to_dict(),
-                    'address': {
-                        'id': pet.address.id,
-                        'street': pet.address.street,
-                        'city': pet.address.city,
-                        'state': pet.address.state
-                    } if pet.address else None
-                }
+                'pet': pet.to_dict()
             }
             return jsonify(response), 200
 
