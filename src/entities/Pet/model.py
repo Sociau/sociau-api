@@ -16,6 +16,8 @@ class Pet(db.Model):
     veterinary_care = db.Column(db.JSON)
     temperament = db.Column(db.JSON)
     about = db.Column(db.String(500))
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    person = db.relationship('Person', backref='pets')
 
     def to_dict(self):
         return {
@@ -31,5 +33,6 @@ class Pet(db.Model):
             'state': self.state,
             'veterinary_care': self.veterinary_care,
             'temperament': self.temperament,
-            'about': self.about
+            'about': self.about,
+            "person_id": self.person_id,
         }

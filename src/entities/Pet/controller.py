@@ -1,15 +1,16 @@
 from flask import jsonify, request
 
 from database.db import db
+from src.entities.Adoption_history.model import Adoption_history
 from src.helpers.upload_to_firebase import send_image_to_firebase
 from src.entities.Pet.model import Pet
-from src.entities.Adoption_history.controller import AdoptionHistoryController
 
 
 class PetController:
     @staticmethod
     def add():
         try:
+            data = request.form
             main_photo = ""
             if 'main_photo' in request.files:
                 main_photo_file = request.files['main_photo']
@@ -19,7 +20,6 @@ class PetController:
 
                 main_photo = send_image_to_firebase(
                     main_photo_file, 'fotos_dos_pets')
-            data = request.form
 
             name = data.get('name')
             species = data.get('species')
@@ -27,13 +27,11 @@ class PetController:
             adopted = bool(data.get('adopted')) or False
             size = data.get('size')
             gender = data.get('gender')
-            main_photo = data.get('main_photo')
             city = data.get('city')
             state = data.get('state')
             veterinary_care = data.get('veterinary_care')
             temperament = data.get('temperament')
             about = data.get('about')
-            which_special_needs = data.get('which_special_needs')
             person_id = data.get('person_id')
 
             pet = Pet(
@@ -49,13 +47,29 @@ class PetController:
                 veterinary_care=veterinary_care,
                 temperament=temperament,
                 about=about,
-                which_special_needs=which_special_needs
+                person_id=person_id
             )
 
             db.session.add(pet)
-            db.session.commit()
+            try:
+                db.session.commit()
+                print("Pet salvo com sucesso!")
+            except Exception as e:
+                print(f"Erro ao salvar pet: {str(e)}")
+                raise e
 
-            AdoptionHistoryController.add_adoption_history(person_id, pet)
+            print(f"Adoption History: {person_id} -> {pet.id}")
+
+            adoption_history = Adoption_history(
+                person_id=person_id, pet_id=pet.id)
+
+            db.session.add(adoption_history)
+            try:
+                db.session.commit()
+                print("Adoção registrada com sucesso!")
+            except Exception as e:
+                print(f"Erro ao salvar adoção: {str(e)}")
+                raise e
 
             response = {
                 'status': 200,
@@ -68,6 +82,7 @@ class PetController:
                 'status': 500,
                 'message': str(e)
             }
+            print(str(e))
             return jsonify(response)
 
     @staticmethod
@@ -106,6 +121,7 @@ class PetController:
             per_page = request.args.get('per_page', 10, type=int)
             sort_by = request.args.get('sort_by', 'id')
             order = request.args.get('order', 'asc')
+            query = Pet.query.filter(*filters)
 
             if order == 'desc':
                 query = query.order_by(getattr(Pet, sort_by).desc())
@@ -131,6 +147,7 @@ class PetController:
             return jsonify(response), 200
 
         except Exception as e:
+            print(str(e))
             return jsonify({'status': 500, 'message': 'Internal server error', 'error': str(e)}), 500
 
     @staticmethod
