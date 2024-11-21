@@ -151,3 +151,58 @@ class PersonController:
             }
 
             return jsonify(response)
+        
+    @staticmethod
+    def edit_user(user_id):
+        try:
+            person = Person.query.get(user_id)
+            address = Address.query.get(person.address_id)
+
+            if person:
+                new_info = request.form.to_dict()
+
+                # Modding person side
+                
+                person.avatar = new_info.get('profile_pic')
+                person.name = new_info.get('name')
+                if pw := new_info.get('primary_wpp'):
+                    person.main_whatsapp = pw
+                if sw := new_info.get('secondary_wpp'):
+                    person.second_whatsapp = sw
+                if au := new_info.get('about-you'):
+                    person.about_you = au
+                person.email = new_info.get('email')
+                person.password = new_info
+                person.nickname = new_info.get('nickname')
+
+                db.session.add(person)
+
+                # Modding address side
+
+                address.state = new_info.get('state')
+                address.city = new_info.get('city')
+                address.street = new_info.get('street')
+                address.neighborhood = new_info.get('neighborhood')
+
+                db.session.commit()
+
+                response = {
+                    'status': 200,
+                    'message': 'user succesfully edited'
+                }
+                return jsonify(response)
+            
+            else:
+                response = {
+                    'status': 404,
+                    'message': 'User not found!'
+                }
+                return jsonify(response)
+        
+        except Exception as e:
+            response = {
+                'status': 500,
+                'message': str(e)
+            }
+            return jsonify(response)
+

@@ -15,3 +15,7 @@ def login_person_route():
 @person_routes.route('/user/<int:user_id>', methods=['GET'])
 def get_user_route(user_id):
     return PersonController.get_user(user_id)
+
+@person_routes.route('/edit_user/<int:user_id>', methods=['POST'])
+def edit_user(user_id):
+    return PersonController.edit_user(user_id)
