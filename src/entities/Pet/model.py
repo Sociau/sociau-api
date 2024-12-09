@@ -11,6 +11,7 @@ class Pet(db.Model):
     size = db.Column(db.String(1), nullable=False)
     gender = db.Column(db.String(1), nullable=False)
     main_photo = db.Column(db.String(500))
+    photos = db.Column(db.JSON)
     city = db.Column(db.String(100))
     state = db.Column(db.String(2))
     veterinary_care = db.Column(db.JSON)
@@ -29,6 +30,7 @@ class Pet(db.Model):
             'size': self.size,
             'gender': self.gender,
             'main_photo': self.main_photo,
+            "photos": self.photos,
             'city': self.city,
             'state': self.state,
             'veterinary_care': self.veterinary_care,

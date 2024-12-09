@@ -12,6 +12,8 @@ class PetController:
         try:
             data = request.form
             main_photo = ""
+            photos = []
+
             if 'main_photo' in request.files:
                 main_photo_file = request.files['main_photo']
 
@@ -20,6 +22,16 @@ class PetController:
 
                 main_photo = send_image_to_firebase(
                     main_photo_file, 'fotos_dos_pets')
+
+            if 'photos' in request.files:
+                photo_files = request.files.getlist('photos')
+                for photo_file in photo_files:
+                    if photo_file.filename == '':
+                        continue
+
+                    photo_url = send_image_to_firebase(
+                        photo_file, 'fotos_dos_pets')
+                    photos.append(photo_url)
 
             name = data.get('name')
             species = data.get('species')
@@ -42,6 +54,7 @@ class PetController:
                 size=size,
                 gender=gender,
                 main_photo=main_photo,
+                photos=photos,
                 city=city,
                 state=state,
                 veterinary_care=veterinary_care,
@@ -165,3 +178,52 @@ class PetController:
 
         except Exception as e:
             return jsonify({'status': 500, 'message': 'Internal server error', 'error': str(e)}), 500
+
+    @staticmethod
+    def update_pet(pet_id):
+        try:
+            pet = Pet.query.get(pet_id)
+            if not pet:
+                return jsonify({'status': 404, 'message': 'Pet not found'}), 404
+
+            data = request.form
+            if 'name' in data:
+                pet.name = data['name']
+            if 'species' in data:
+                pet.species = data['species']
+            if 'breed' in data:
+                pet.breed = data['breed']
+            if 'adopted' in data:
+                pet.adopted = data.get('adopted').lower() == 'true'
+            if 'size' in data:
+                pet.size = data['size']
+            if 'gender' in data:
+                pet.gender = data['gender']
+            if 'city' in data:
+                pet.city = data['city']
+            if 'state' in data:
+                pet.state = data['state']
+            if 'veterinary_care' in data:
+                pet.veterinary_care = data['veterinary_care']
+            if 'temperament' in data:
+                pet.temperament = data['temperament']
+            if 'about' in data:
+                pet.about = data['about']
+            if 'person_id' in data:
+                pet.person_id = data['person_id']
+
+            if 'main_photo' in request.files:
+                main_photo_file = request.files['main_photo']
+                if main_photo_file.filename:
+                    pet.main_photo = send_image_to_firebase(
+                        main_photo_file, 'fotos_dos_pets')
+
+            if 'photos' in request.files:
+                photo_files = request.files.getlist('photos')
+                pet.photos = [send_image_to_firebase(
+                    photo_file, 'fotos_dos_pets') for photo_file in photo_files if photo_file.filename]
+
+            db.session.commit()
+            return jsonify({'status': 200, 'message': 'Pet updated successfully'})
+        except Exception as e:
+            return jsonify({'status': 500, 'message': str(e)})
