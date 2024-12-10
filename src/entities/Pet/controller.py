@@ -194,7 +194,13 @@ class PetController:
             if 'breed' in data:
                 pet.breed = data['breed']
             if 'adopted' in data:
-                pet.adopted = data.get('adopted').lower() == 'true'
+                adopted_value = data.get('adopted').lower()
+                if adopted_value == 'true':
+                    pet.adopted = True
+                elif adopted_value == 'false':
+                    pet.adopted = False
+                else:
+                    return jsonify({'status': 400, 'message': 'Invalid value for adopted'}), 400
             if 'size' in data:
                 pet.size = data['size']
             if 'gender' in data:

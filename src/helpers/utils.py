@@ -1,6 +1,9 @@
-import hashlib
 import os
 from cryptography.fernet import Fernet
+
+import random
+import string
+
 
 class CryptographyManager:
     def __init__(self, key=None):
@@ -24,3 +27,13 @@ class CryptographyManager:
             return self.cipher_suite.decrypt(cipher_text).decode('utf-8')
         except (ValueError, TypeError) as e:
             raise ValueError(f"Decryption failed: {e}")
+
+
+class GenerateCode:
+    def generate_code():
+        chars = string.ascii_letters + string.digits
+        code = ''.join(random.choices(chars, k=6))
+        return code
+
+    def compare_code(code1, code2):
+        return code1 == code2

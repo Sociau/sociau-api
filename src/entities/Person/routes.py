@@ -24,3 +24,8 @@ def get_user_route(user_id):
 @token_required
 def update_user_route(current_user):
     return PersonController.update_person(current_user)
+
+
+@person_routes.route("/send_email", methods=["GET"])
+def send_email():
+    return PersonController.send_email()

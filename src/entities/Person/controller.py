@@ -1,6 +1,8 @@
+import os
 from flask import jsonify, request, Flask
+import yagmail
 from src.middlewares.jwt import create_token
-from src.helpers.utils import CryptographyManager
+from src.helpers.utils import CryptographyManager, GenerateCode
 from src.entities.Person.model import Person
 from src.entities.Address.model import Address
 from src.helpers.upload_to_firebase import send_image_to_firebase
@@ -221,5 +223,97 @@ class PersonController:
                 'error': 500,
                 'message': str(e)
             }
+
+            return jsonify(response)
+
+    def send_email():
+        data = request.get_json()
+        person = Person.query.filter_by(email=data.get('email')).first()
+
+        if person:
+            yag = yagmail.SMTP(os.getenv('SENDER_EMAIL'),
+                               os.getenv('SENDER_PASSWORD'))
+
+            code = GenerateCode.generate_code()
+
+            person.email_code = code
+            db.session.commit()
+
+            yag.send(
+                to=data.get('email'),
+                subject="Olá aumigo, aqui está seu codigo de verificação",
+                contents=f"Código {code}"
+            )
+
+            print("E-mail enviado com sucesso!")
+        else:
+            response = {"status": 404, "message": "Person not found"}
+            return jsonify(response)
+
+    def forgot_password():
+        try:
+            data = request.get_json()
+            person = Person.query.filter_by(email=data.get('email')).first()
+
+            if person:
+                if person.email_code == data.get('code'):
+                    person.password = CryptographyManager().from_string_to_hash_code(
+                        data.get('password'))
+
+                    db.session.commit()
+
+                    response = {
+                        'status': 200,
+                        'message': 'person updated successfully'
+                    }
+                    return jsonify(response)
+
+                else:
+                    response = {
+                        'status': 400,
+                        'message': 'Invalid code'
+                    }
+                    return jsonify(response)
+
+            else:
+                response = {
+                    'status': 404,
+                    'message': 'Person not found',
+                }
+                return jsonify(response)
+
+        except Exception as e:
+            response = {"error": 500, "message": str(e)}
+
+            return jsonify(response)
+
+    def update_password(current_person):
+        try:
+            person = Person.query.get(current_person['user'])
+
+            if person:
+                data = request.get_json()
+
+                person.password = CryptographyManager().from_string_to_hash_code(
+                    data.get('password'))
+
+                db.session.commit()
+
+                response = {
+                    'status': 200,
+                    'message': 'person updated successfully'
+                }
+                return jsonify(response)
+
+            else:
+                response = {
+                    'status': 404,
+                    'message': 'person not found!'
+                }
+                return jsonify(response)
+
+        except Exception as e:
+
+            response = {"error": 500, "message": str(e)}
 
             return jsonify(response)

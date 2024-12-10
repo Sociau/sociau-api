@@ -15,6 +15,7 @@ class Person(db.Model):
     nickname = db.Column(db.String(20), nullable=False)
     address_id = db.Column(db.Integer, db.ForeignKey('address.id'))
     address = db.relationship('Address', backref='persons')
+    email_code = db.Column(db.String(10))
 
     def to_dict(self):
         return {
@@ -26,5 +27,7 @@ class Person(db.Model):
             'about_you': self.about_you,
             'email': self.email,
             'nickname': self.nickname,
-            'address_id': self.address_id
+            'address_id': self.address_id,
+            'email_code': self.email_code
+
         }

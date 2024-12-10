@@ -21,3 +21,9 @@ def get_pets_route():
 @pets_routes.route('/pets/<int:pet_id>', methods=['GET'])
 def get_pet_route(pet_id):
     return PetController.get_by_id(pet_id)
+
+
+@pets_routes.route('/pets/<int:pet_id>', methods=['PUT'])
+@token_required
+def update_pet_route(current_user, pet_id):
+    return PetController.update_pet(pet_id)
