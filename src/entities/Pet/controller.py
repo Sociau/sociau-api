@@ -34,6 +34,7 @@ class PetController:
                     photos.append(photo_url)
 
             name = data.get('name')
+            age = data.get('age')
             species = data.get('species')
             breed = data.get('breed')
             adopted = bool(data.get('adopted')) or False
@@ -48,6 +49,7 @@ class PetController:
 
             pet = Pet(
                 name=name,
+                age=age,
                 species=species,
                 breed=breed,
                 adopted=adopted,
@@ -131,7 +133,7 @@ class PetController:
                 filters.append(Pet.city == city)
 
             page = request.args.get('page', 1, type=int)
-            per_page = request.args.get('per_page', 10, type=int)
+            per_page = request.args.get('per_page', 20, type=int)
             sort_by = request.args.get('sort_by', 'id')
             order = request.args.get('order', 'asc')
             query = Pet.query.filter(*filters)

@@ -15,6 +15,7 @@ class Pet(db.Model):
     city = db.Column(db.String(100))
     state = db.Column(db.String(2))
     veterinary_care = db.Column(db.JSON)
+    age = db.Column(db.String(20))
     temperament = db.Column(db.JSON)
     about = db.Column(db.String(500))
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
@@ -37,4 +38,5 @@ class Pet(db.Model):
             'temperament': self.temperament,
             'about': self.about,
             "person_id": self.person_id,
+            'age': self.age
         }
