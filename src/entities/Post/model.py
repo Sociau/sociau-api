@@ -14,7 +14,7 @@ class Post(db.Model):
     veterinary_event = db.Column(db.Boolean, nullable=False)
     parterns_campaign = db.Column(db.Boolean, nullable=False)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
-    person = db.relationship('Person', backref='pets')
+    person = db.relationship('Person', backref='post')
 
     def to_dict(self):
         return {

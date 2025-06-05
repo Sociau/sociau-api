@@ -31,7 +31,7 @@ class PostController:
             state = data.get('state')
             person_id = data.get('person_id')
 
-            Post = Post(
+            new_post = Post(
                 state=state,
                 city=city,
                 neighborhood=neighborhood,
@@ -44,7 +44,7 @@ class PostController:
                 person_id=person_id,
             )
 
-            db.session.add(Post)
+            db.session.add(new_post)
             try:
                 db.session.commit()
                 print("Post salvo com sucesso!")
@@ -113,8 +113,8 @@ class PostController:
                 page=page, per_page=per_page, error_out=False)
             Posts = [
                 {
-                    'Post': Post.to_dict()
-                } for Post in pagination.items
+                    'Post': post.to_dict()
+                } for post in pagination.items
             ]
 
             response = {
@@ -134,13 +134,12 @@ class PostController:
     @staticmethod
     def get_by_id(Post_id):
         try:
-            Post = Post.query.get(Post_id)
-            if not Post:
+            post = Post.query.get(Post_id)
+            if not post:
                 return jsonify({'status': 404, 'message': 'Post not found'}), 404
-
             response = {
                 'status': 200,
-                'Post': Post.to_dict()
+                'Post': post.to_dict()
             }
             return jsonify(response), 200
 
