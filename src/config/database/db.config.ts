@@ -3,7 +3,7 @@ export const dbConfig = {
     host: 'localhost',
     port: 5432,
     username: 'postgres',
-    password: 'sua_senha',
+    password: '12345',
     database: 'sociau',
     entities: ['dist/**/**/*.entity{.ts,.js}'],
     migrations: ['dist/migrations/*{.ts,.js}'],

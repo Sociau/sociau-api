@@ -14,10 +14,10 @@ export class User {
     @Column({ nullable: false })
     last_name: string;
 
-    @Column()
+    @Column({ nullable: true })
     born_date: Date;
 
-    @Column()
+    @Column({ nullable: true })
     profile_pic: string;
 
     @Column({ nullable: false })
