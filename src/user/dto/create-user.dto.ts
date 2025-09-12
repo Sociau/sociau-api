@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsObject, IsString } from "class-validator";
 import { CreateAddressDto } from "src/address/dto/create-address-dto";
+import { CreateUserContactDto } from "src/user_contact/dto/create-user_contact.dto";
 
 export class CreateUserDto {
 
@@ -27,4 +28,8 @@ export class CreateUserDto {
     @IsObject()
     @ApiProperty({ description: 'User address', example: { street: 'street', neighborhood: 'neighborhood' } })
     address?: CreateAddressDto;
+
+    @IsObject()
+    @ApiProperty({ description: 'User contact', example: { facebook: 'Lucas', instagram: 'jlucasgf' } })
+    contact?: CreateUserContactDto;
 }

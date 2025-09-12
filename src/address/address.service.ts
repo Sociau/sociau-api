@@ -9,12 +9,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class AddressService {
     constructor(@InjectRepository(Address) private addressRepository: AddressRepository) { }
 
-    async create(createAddressDto: CreateAddressDto): Promise<Address> {
+    async create(createAddressDto: CreateAddressDto) {
         const address = this.addressRepository.create(createAddressDto);
-        return await this.addressRepository.save(address);
+        await this.addressRepository.save(address);
     }
 
-    async update(id: number, updateAddressDto: UpdateAddressDto): Promise<Address> {
+    async update(id: number, updateAddressDto: UpdateAddressDto) {
         const address = await this.addressRepository.findOne({ where: { id } });
 
         if (!address) {
@@ -23,7 +23,7 @@ export class AddressService {
 
         this.addressRepository.merge(address, updateAddressDto);
 
-        return await this.addressRepository.save(address);
+        await this.addressRepository.save(address);
     }
 
     async remove(id: number): Promise<void> {

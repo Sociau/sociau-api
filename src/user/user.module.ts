@@ -5,11 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { TypeOrmExModule } from 'src/custom-repository/typeorm-ex.module';
 import { UserRepository } from './user.repository';
-import { AddressService } from 'src/address/address.service';
 import { AddressModule } from 'src/address/address.module';
+import { UserContactModule } from 'src/user_contact/user_contact.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), TypeOrmExModule.forCustomRepository([UserRepository]), AddressModule],
+  imports: [TypeOrmModule.forFeature([User]), TypeOrmExModule.forCustomRepository([UserRepository]), AddressModule, UserContactModule],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
