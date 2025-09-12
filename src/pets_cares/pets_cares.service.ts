@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePetsCareDto } from './dto/create-pets_care.dto';
 import { UpdatePetsCareDto } from './dto/update-pets_care.dto';
+import { PetsCaresRepository } from './pets_cares.repository';
 
 @Injectable()
 export class PetsCaresService {
-  create(createPetsCareDto: CreatePetsCareDto) {
-    return 'This action adds a new petsCare';
+  constructor(private readonly petCaresRepository: PetsCaresRepository) { }
+
+  async create(createPetsCareDto: CreatePetsCareDto) {
+    const petCares = this.petCaresRepository.create({
+      ...createPetsCareDto,
+      pet: { id: createPetsCareDto.petId }
+    });
+    await this.petCaresRepository.save(petCares);
   }
 
-  findAll() {
-    return `This action returns all petsCares`;
+  async findOne(id: number) {
+    const petCares = await this.petCaresRepository.findOneBy({ id });
+
+    if (!petCares) {
+      throw new NotFoundException(`Pet care with id ${id}, not found`);
+    }
+
+    return petCares;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} petsCare`;
-  }
+  async update(id: number, updatePetsCareDto: UpdatePetsCareDto) {
+    const petsCare = await this.petCaresRepository.findOne({ where: { id } });
 
-  update(id: number, updatePetsCareDto: UpdatePetsCareDto) {
-    return `This action updates a #${id} petsCare`;
-  }
+    if (!petsCare) {
+      throw new NotFoundException(`Pet care with ID ${id} not found`);
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} petsCare`;
+    this.petCaresRepository.merge(petsCare, updatePetsCareDto);
+
+    await this.petCaresRepository.save(petsCare);
   }
 }

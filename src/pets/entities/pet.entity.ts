@@ -3,6 +3,8 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, Prim
 import { PetStatus } from "../enums/status-pet.enum";
 import { PetsImage } from "src/pets_images/entities/pets_image.entity";
 import { PetsCare } from "src/pets_cares/entities/pets_care.entity";
+import { PetSize } from "../enums/size-pet.enum";
+import { PetGender } from "../enums/gender-pet.enum";
 
 @Entity("pet")
 export class Pet {
@@ -16,8 +18,11 @@ export class Pet {
     @Column({ type: "varchar", nullable: false })
     name: string;
 
-    @Column({ type: "varchar", nullable: false })
-    gender: string;
+    @Column({
+        type: "enum",
+        enum: PetGender,
+    })
+    gender: PetGender;
 
     @Column({ type: "varchar", nullable: false })
     age: string;
@@ -25,8 +30,11 @@ export class Pet {
     @Column({ type: "varchar", nullable: false })
     about: string;
 
-    @Column({ type: "varchar", nullable: false })
-    size: string;
+    @Column({
+        type: "enum",
+        enum: PetSize,
+    })
+    size: PetSize;
 
     @Column({
         type: "enum",

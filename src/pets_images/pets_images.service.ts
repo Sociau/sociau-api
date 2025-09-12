@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePetsImageDto } from './dto/create-pets_image.dto';
-import { UpdatePetsImageDto } from './dto/update-pets_image.dto';
+import { uploadImageToFirebase } from 'src/lib/firebase/uploadImage';
+import { PetsImagesRepository } from './pets_images.repository';
 
 @Injectable()
 export class PetsImagesService {
-  create(createPetsImageDto: CreatePetsImageDto) {
-    return 'This action adds a new petsImage';
-  }
 
-  findAll() {
-    return `This action returns all petsImages`;
-  }
+  constructor(private readonly petsImagesRepository: PetsImagesRepository) { }
 
-  findOne(id: number) {
-    return `This action returns a #${id} petsImage`;
-  }
+  async create(petId: number, files: Express.Multer.File[]) {
+    const urls: string[] = [];
 
-  update(id: number, updatePetsImageDto: UpdatePetsImageDto) {
-    return `This action updates a #${id} petsImage`;
-  }
+    for (const file of files) {
+      const url = await uploadImageToFirebase(file, 'pets');
+      urls.push(url);
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} petsImage`;
+    const images = this.petsImagesRepository.create({
+      pet: { id: petId },
+      images: urls
+    });
+    await this.petsImagesRepository.save(images);
+
+    return images;
   }
 }
