@@ -25,11 +25,11 @@ export class PetsCaresService {
     return petCares;
   }
 
-  async update(id: number, updatePetsCareDto: UpdatePetsCareDto) {
-    const petsCare = await this.petCaresRepository.findOne({ where: { id } });
+  async update(pet_id: number, updatePetsCareDto: UpdatePetsCareDto) {
+    const petsCare = await this.petCaresRepository.findOne({ where: { pet: { id: pet_id } } });
 
     if (!petsCare) {
-      throw new NotFoundException(`Pet care with ID ${id} not found`);
+      throw new NotFoundException(`Pet care of pet with ID ${pet_id} not found`);
     }
 
     this.petCaresRepository.merge(petsCare, updatePetsCareDto);
