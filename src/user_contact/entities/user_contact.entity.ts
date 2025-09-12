@@ -1,5 +1,5 @@
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('contact')
 export class UserContact {
@@ -7,6 +7,7 @@ export class UserContact {
     id: number;
 
     @OneToOne(() => User, (user) => user.contact, { onDelete: "CASCADE" })
+    @JoinColumn({ name: "user_id" })
     user: User;
 
     @Column({ type: "varchar", nullable: true })

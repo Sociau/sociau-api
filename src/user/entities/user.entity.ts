@@ -1,6 +1,7 @@
 import { Address } from "src/address/entities/address.entity";
+import { Pet } from "src/pets/entities/pet.entity";
 import { UserContact } from "src/user_contact/entities/user_contact.entity";
-import { Column, Entity, PrimaryGeneratedColumn, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, JoinColumn, OneToOne, OneToMany } from "typeorm";
 
 @Entity("user")
 export class User {
@@ -29,10 +30,11 @@ export class User {
     profile_pic: string;
 
     @OneToOne(() => Address, (address) => address.user, { cascade: true })
-    @JoinColumn({ name: "address_id" })
     address: Address;
 
     @OneToOne(() => UserContact, (contact) => contact.user, { cascade: true })
-    @JoinColumn({ name: "contact_id" })
     contact: UserContact;
+
+    @OneToMany(() => Pet, (pet) => pet.user, { cascade: true })
+    pets: Pet[];
 }
