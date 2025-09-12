@@ -5,6 +5,10 @@ import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { AddressModule } from './address/address.module';
+import { UserContactModule } from './user_contact/user_contact.module';
+import { PetsModule } from './pets/pets.module';
+import { PetsImagesModule } from './pets_images/pets_images.module';
+import { PetsCaresModule } from './pets_cares/pets_cares.module';
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -19,7 +23,7 @@ dotenv.config();
     database: process.env.DB_DATABASE,
     autoLoadEntities: true,
     synchronize: true,
-  }), UserModule, AuthModule, AddressModule],
+  }), UserModule, AuthModule, AddressModule, UserContactModule, PetsModule, PetsImagesModule, PetsCaresModule],
   controllers: [AppController],
   providers: [AppService],
 })
