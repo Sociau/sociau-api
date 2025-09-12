@@ -6,6 +6,7 @@ import { Public } from 'src/auth/auth.guard';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AddressService } from 'src/address/address.service';
 import { UserContactService } from 'src/user_contact/user_contact.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -36,5 +37,37 @@ export class UserController {
     }
 
     return user;
+  }
+
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update an existing user' })
+  @ApiBody({ type: UpdateUserDto })
+  @ApiResponse({ status: 200, description: 'The user has been successfully updated.' })
+  async update(
+    @Param('id') id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    const user = await this.userService.update(id, updateUserDto);
+
+    if (updateUserDto.address) {
+      await this.addressService.update(user.address.id, updateUserDto.address);
+    }
+
+    if (updateUserDto.contact) {
+      await this.userContactService.update(user.contact.id, updateUserDto.contact);
+    }
+
+    return user;
+  }
+
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get an existing user by id' })
+  @ApiResponse({ status: 200, description: 'User data' })
+  async getById(
+    @Param("id") id: number,
+  ): Promise<User> {
+    return await this.userService.getUserById(id);
   }
 }

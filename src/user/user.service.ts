@@ -4,6 +4,7 @@ import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcryptjs';
 import { User } from './entities/user.entity';
 import * as dotenv from "dotenv";
+import { UpdateUserDto } from './dto/update-user.dto';
 
 dotenv.config();
 
@@ -54,6 +55,21 @@ export class UserService {
     }
 
     return user;
+  }
+
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['address', 'contact'],
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    Object.assign(user, updateUserDto);
+
+    return this.userRepository.save(user);
   }
 
 }
