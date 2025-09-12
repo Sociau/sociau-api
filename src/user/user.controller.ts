@@ -4,37 +4,32 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Public } from 'src/auth/auth.guard';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AddressService } from 'src/address/address.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService, private readonly addressService: AddressService) { }
 
 
   @Public()
   @Post('/create_account')
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
   async signUp(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return await this.userService.create(createUserDto);
+    const user = await this.userService.create(createUserDto);
+
+    if (createUserDto.address) {
+
+      const address = await this.addressService.create({
+        ...createUserDto.address,
+        user: user,
+      });
+
+      user.address = address;
+    }
+
+    return user;
   }
-
-  /*
-
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }*/
 }

@@ -1,9 +1,11 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcryptjs';
 import { User } from './entities/user.entity';
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 @Injectable()
 export class UserService {
@@ -11,12 +13,18 @@ export class UserService {
 
 
   async create(createUserDto: CreateUserDto) {
-    const saltRounds = 10;
-    const id = createUserDto.id;
-    const existUser = await this.userRepository.createQueryBuilder('user').where('user.id = :id', { id }).select(['user.id']).getOne();
+    const saltRounds = parseInt(process.env.SALT_ROUNDS || '10', 10);
+
+    let existUser = await this.userRepository.findOneBy({ cpf: createUserDto.cpf });
 
     if (existUser) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+    }
+
+    existUser = await this.userRepository.findOneBy({ email: createUserDto.email });
+
+    if (existUser) {
+      throw new HttpException('User email already exists', HttpStatus.BAD_REQUEST);
     }
 
     createUserDto.password = await bcrypt.hash(createUserDto.password, saltRounds);
@@ -27,12 +35,8 @@ export class UserService {
     return user;
   }
 
-  findAll() {
-    return `This action returns all user`;
-  }
-
   async getUserById(id: number): Promise<User> {
-    const user = await this.userRepository.createQueryBuilder('user').where('user.id = :id', { id }).getOne();
+    const user = await this.userRepository.findOneBy({ id });
 
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
@@ -42,7 +46,8 @@ export class UserService {
   }
 
   async getUserByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.createQueryBuilder('user').where('user.email = :email', { email }).getOne();
+    const user = await this.userRepository.findOneBy({ email });
+
 
     if (!user) {
       throw new NotFoundException(`User ${email} not found`);
@@ -51,11 +56,4 @@ export class UserService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
 }

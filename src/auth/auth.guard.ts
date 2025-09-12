@@ -3,7 +3,8 @@ import { ConfigService } from "@nestjs/config";
 import { Reflector } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
-import { Observable } from "rxjs";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -28,7 +29,7 @@ export class AuthGuard implements CanActivate {
 
         try {
             const payload = await this.jwtService.verifyAsync(token, {
-                secret: "sociau22"
+                secret: process.env.SECRET_KEY
             });
             request['user'] = payload;
         } catch {

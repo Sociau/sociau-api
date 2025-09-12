@@ -6,6 +6,9 @@ import { UserModule } from 'src/user/user.module';
 import { AuthGuard } from './auth.guard';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 @Module({
     imports: [
@@ -14,7 +17,7 @@ import { AuthService } from './auth.service';
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => {
                 return {
-                    secret: "sociau22",
+                    secret: process.env.SECRET_KEY,
                 };
             },
             inject: [ConfigService],
