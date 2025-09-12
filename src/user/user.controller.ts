@@ -11,6 +11,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { uploadImageToFirebase } from 'src/lib/firebase/uploadImage';
 import { CreateUserContactDto } from 'src/user_contact/dto/create-user_contact.dto';
 import { CreateAddressDto } from 'src/address/dto/create-address-dto';
+import { deleteImageFromFirebase } from 'src/lib/firebase/deleteImage';
+import { admin } from 'src/lib/firebase/connection';
 
 @Controller('user')
 export class UserController {
@@ -84,34 +86,70 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
 
+    const user = await this.userService.getUserById(id);
+
+    if (updateUserDto.cpf && updateUserDto.cpf !== user.cpf) {
+      const cpfExists = await this.userService.findUserByCpf(updateUserDto.cpf);
+      if (cpfExists) {
+        throw new BadRequestException("Another user with this CPF already exists");
+      }
+    }
+
+    if (updateUserDto.email && updateUserDto.email !== user.email) {
+      const emailExists = await this.userService.findUserByEmail(updateUserDto.email);
+      if (emailExists) {
+        throw new BadRequestException("Another user with this email already exists");
+      }
+    }
+
     if (profilePic) {
+
+      if (user.profile_pic) {
+        await deleteImageFromFirebase(admin.storage().bucket(), user.profile_pic);
+      }
+
       const profilePicUrl = await uploadImageToFirebase(profilePic, "user-profile-pic");
       updateUserDto.profile_pic = profilePicUrl;
     }
 
-    const user = await this.userService.update(id, updateUserDto);
+    const userFields = Object.fromEntries(
+      Object.entries(updateUserDto).filter(
+        ([key, value]) => ['first_name', 'last_name', 'email', 'cpf', 'password', 'profile_pic'].includes(key) && value != null && value !== ""
+      )
+    );
+    await this.userService.update(id, userFields);
 
-    const address: Partial<CreateAddressDto> = Object.fromEntries(
-      Object.entries(updateUserDto)
-        .filter(([key, value]) => value !== undefined && value !== "")
-    ) as Partial<CreateAddressDto>;
-
-    address.user = user;
-
-    if (Object.keys(address).length > 1) {
-      await this.addressService.update(user.address.id, address);
+    const addressFields = ['number', 'street', 'neighborhood', 'city', 'state', 'line_2'];
+    const address: Partial<CreateAddressDto> = {};
+    addressFields.forEach(field => {
+      if (updateUserDto[field] != null && updateUserDto[field] !== "") address[field] = updateUserDto[field];
+    });
+    if (Object.keys(address).length > 0) {
+      address.user = user;
+      if (user.address) {
+        await this.addressService.update(user.address.id, address);
+      } else {
+        await this.addressService.create(address as CreateAddressDto);
+      }
     }
 
-    const contact: Partial<CreateUserContactDto> = Object.fromEntries(
-      Object.entries(updateUserDto).filter(([key, value]) => value != undefined && value != "")
-    ) as Partial<CreateUserContactDto>;
+    const contactFields = ['phone', 'facebook', 'instagram'];
+    const contact: Partial<CreateUserContactDto> = {};
+    contactFields.forEach(field => {
+      if (updateUserDto[field] != null && updateUserDto[field] !== "") contact[field] = updateUserDto[field];
+    });
+    if (Object.keys(contact).length > 0) {
+      contact.user = user;
+      if (user.contact) {
+        await this.userContactService.update(user.contact.id, contact);
+      } else {
+        await this.userContactService.create(contact as CreateUserContactDto);
+      }
+    }
 
-    contact.user = user;
-
-    await this.userContactService.update(user.contact.id, contact);
-
-    return user;
+    return this.userService.getUserById(id);
   }
+
 
 
   @Get(':id')
